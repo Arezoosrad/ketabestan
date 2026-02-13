@@ -1,0 +1,90 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}جستجو | کتابستان{% endblock %}
+
+{% block content %}
+
+
+{% if query %}
+<div class="search-info mt-4 text-center">
+    <h4 class="fw-bold">
+        {% if results_count > 0 %}
+        <i class="bi bi-check-circle-fill text-success me-2"></i>
+        {{ results_count }} نتیجه برای "{{ query }}"
+        {% endif %}
+    </h4>
+</div>
+{% endif %}
+
+<div class="search-results">
+    <div class="container">
+        {% if query %}
+            {% if results %}
+                <div class="filter-bar mb-4 p-3 bg-light rounded-3 shadow-sm">
+                </div>
+
+                <div class="row g-4">
+                    {% for book in results %}
+                    <div class="col-6 col-md-4 col-lg-3">
+                        <div class="book-card search-result-card h-100">
+                            {% if book.discount_percentage %}
+                            <span class="discount-badge">{{ book.discount_percentage }}%</span>
+                            {% endif %}
+                            
+                            <img src="{{ book.cover.url }}" alt="{{ book.title }}" class="book-cover">
+                            
+                            <div class="book-info p-3">
+                                <h5 class="book-title">{{ book.title|truncatechars:30 }}</h5>
+                                <p class="book-author text-muted mb-2">
+                                    <i class="bi bi-person me-1"></i>{{ book.author }}
+                                </p>
+                                
+                                {% if book.category %}
+                                <span class="badge bg-light text-dark mb-3">
+                                    {{ book.category.name }}
+                                </span>
+                                {% endif %}
+                                
+                                <div class="book-price mt-3">
+                                    {% if book.discount_price %}
+                                    <div class="d-flex align-items-center">
+                                        <span class="text-decoration-line-through text-muted small me-2">
+                                            {{ book.price }} تومان
+                                        </span>
+                                        <span class="fw-bold fs-5 text-primary">
+                                            {{ book.discount_price }} تومان
+                                        </span>
+                                    </div>
+                                    {% else %}
+                                    <span class="fw-bold fs-5 text-primary">{{ book.price }} تومان</span>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="book-actions mt-3">
+                                    <a href="{% url 'book_detail' book.id %}" 
+                                       class="btn btn-sm btn-primary w-100" 
+                                       style="display: inline-block; text-decoration: none; color: white; background-color: #0d6efd; border: none; padding: 0.4rem 0; border-radius: 0.375rem; font-weight: 500; transition: all 0.2s;">
+                                        <i class="bi bi-eye me-1"></i>مشاهده جزئیات
+                                    </a>
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+            {% else %}
+                <div class="no-results text-center py-5">
+                </div>
+            {% endif %}
+        {% else %}
+            <div class="search-intro text-center py-5">
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+
+{% endblock %}

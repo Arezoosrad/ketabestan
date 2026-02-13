@@ -1,0 +1,126 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}کتابستان{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+ 
+    <link rel="stylesheet" href="{% static 'core/css/style.css' %}">
+   
+</head>
+<body>
+
+
+    
+<nav class="navbar navbar-expand-lg navbar-light bg-gradient p-3 shadow-sm">
+    <div class="container-fluid">
+
+       
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0 align-items-center">
+            <li class="nav-item">
+                <a class="nav-link nav-fancy" href="{% url 'home' %}">
+                    <i class="bi bi-house-fill"></i> خانه
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link nav-fancy" href="{% url 'profile' %}">
+                    <i class="bi bi-person-fill"></i> پروفایل
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link nav-fancy" href="{% url 'booksgroup' %}">
+                    <i class="bi bi-grid-fill"></i> دسته‌بندی‌ها
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link nav-fancy" href="{% url 'darbarema' %}">
+                    <i class="bi bi-info-circle-fill"></i> درباره ما
+                </a>
+            </li>
+        </ul>
+
+        <!-- چپ‌چین -->
+        <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center">
+            <li class="nav-item">
+                <a class="nav-link nav-fancy signup" href="{% url 'register' %}">
+                    <i class="bi bi-person-plus-fill"></i> ثبت‌نام
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link nav-fancy login" href="{% url 'login' %}">
+                    <i class="bi bi-box-arrow-in-right"></i> ورود
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link nav-fancy cart" href="{% url 'cart_detail' %}">
+                    <i class="bi bi-cart-fill"></i> سبد خرید
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link nav-fancy logout" href="{% url 'logout' %}">
+                    <i class="bi bi-box-arrow-right"></i> خروج
+                </a>
+            </li>
+        </ul>
+
+    </div>
+</nav>
+
+{% if messages %}
+<div class="container mt-3">
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show text-center shadow"
+             role="alert"
+             style="direction: rtl; font-size: 15px;">
+             
+            {{ message }}
+
+            <button type="button" class="btn-close" data-bs-dismiss="alert"
+                    aria-label="Close"></button>
+        </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+
+
+
+<header class="hero">
+    <div class="hero-overlay"></div>
+    <div class="hero-content container">
+        <img src="{% static 'core/images/logoo.png' %}" alt="logo">
+        <h1>کتابستان</h1>
+        <p>لذت خرید و خواندن کتاب‌های ارزشمند</p>
+    </div>
+</header>
+  
+<section class="search-section">
+    <div class="container">
+        <form action="{% url 'search' %}" method="GET" class="search-form">
+            <div class="search-box">
+                <i class="bi bi-search"></i>
+                <input type="text" 
+                       name="q" 
+                       placeholder="جستجوی کتاب…"
+                       value="{{ request.GET.q|default:'' }}">
+                <button type="submit" class="search-btn">جستجو</button>
+            </div>
+        </form>
+    </div>
+</section>
+
+<main class="container my-5">
+
+
+
+    {% block content %}{% endblock %}
+</main>
+
+</body>
+</html>

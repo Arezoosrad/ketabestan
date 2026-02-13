@@ -1,0 +1,34 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block title %}کتاب‌های علاقه‌مندی{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4 text-center">❤️ کتاب‌های علاقه‌مندی شما</h2>
+
+    {% if favorites %}
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            {% for fav in favorites %}
+                <div class="col">
+                    <div class="card h-100 shadow-sm">
+                        {% if fav.book.cover %}
+                            <img src="{{ fav.book.cover.url }}" class="card-img-top" alt="{{ fav.book.title }}">
+                        {% else %}
+                            <img src="{% static 'images/default_cover.jpg' %}" class="card-img-top" alt="کاور پیش‌فرض">
+                        {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title">{{ fav.book.title }}</h5>
+                            <p class="card-text">نویسنده: {{ fav.book.author }}</p>
+                            <p class="card-text">قیمت: {{ fav.book.price }} تومان</p>
+                            <a href="{% url 'book_detail' fav.book.id %}" class="btn btn-primary btn-sm">جزئیات کتاب</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="text-center text-muted">هیچ کتابی در علاقه‌مندی‌ها موجود نیست </p>
+    {% endif %}
+</div>
+{% endblock %}

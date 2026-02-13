@@ -1,0 +1,26 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block title %}خانه | کتابستان{% endblock %}
+
+{% block content %}
+<section class="new-books">
+    <h2 class="section-title">تازه‌ها</h2>
+
+    <div class="row g-4">
+        {% for book in books %}
+        <div class="col-6 col-md-4 col-lg-3">
+            <div class="book-card">
+                <img src="{{ book.cover.url }}" alt="{{ book.title }}">
+                <h3>{{ book.title }}</h3>
+                <span class="author">{{ book.author }}</span>
+                <span class="price">{{ book.price }} تومان</span>
+                <a href="{% url 'book_detail' book.id %}" target="_blank" class="btn-details">
+                    مشاهده جزئیات
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

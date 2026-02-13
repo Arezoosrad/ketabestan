@@ -1,0 +1,128 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block title %}{{ book.title }} | فروشگاه کتاب{% endblock %}
+
+{% block content %}
+<div class="book-detail-wrapper">
+    <div class="book-detail-card">
+        
+        <div class="book-gallery">
+            {% if book.cover %}
+                <img src="{{ book.cover.url }}" alt="{{ book.title }}" class="main-cover">
+            {% else %}
+                <img src="{% static 'images/default_cover.jpg' %}" alt="کاور پیش‌فرض" class="main-cover">
+            {% endif %}
+        </div>
+
+        <div class="book-info">
+            <h1 class="book-title">{{ book.title }}</h1>
+            
+            <div class="book-meta-info">
+                <div class="author-publisher">
+                    <span class="meta-label">نویسنده:</span>
+                    <span class="meta-value">{{ book.author }}</span>
+                    
+                    {% if book.publisher %}
+                        <span class="meta-label">ناشر:</span>
+                        <span class="meta-value">{{ book.publisher }}</span>
+                    {% endif %}
+                </div>
+                
+                <div class="book-specs">
+                    {% if book.pages %}
+                        <span class="spec-item">📖 {{ book.pages }} صفحه</span>
+                    {% endif %}
+                    {% if book.publish_date %}
+                        <span class="spec-item">📅 {{ book.publish_date|date:"Y/m/d" }}</span>
+                    {% endif %}
+                </div>
+
+                <div class="categories">
+                    {% for cat in book.categories.all %}
+                        <a href="{% url 'category_books' cat.id %}" class="category-badge">{{ cat.title }}</a>
+                    {% empty %}
+                        <span class="category-badge">دسته‌بندی نشده</span>
+                    {% endfor %}
+                </div>
+            </div>
+
+      
+
+            <div class="book-description-section">
+                <h3>📘 درباره کتاب</h3>
+                <div class="book-description">
+                    {{ book.description|linebreaks }}
+                </div>
+            </div>
+
+
+            <div class="reviews-preview">
+                <div class="reviews-header">
+                    <h4>📝 آخرین نظرات کاربران</h4>
+                    <a href="{% url 'book_reviews' book.id %}" class="view-all-link">مشاهده همه {{ book.reviews.count }} نظر ←</a>
+                </div>
+                
+                {% if book.reviews.all %}
+                    {% for review in book.reviews.all|slice:":3" %}
+                        <div class="review-item">
+                            <div class="review-header">
+                                <div class="reviewer-info">
+                                    <span class="reviewer-name">{{ review.user.username }}</span>
+                                    <span class="review-rating">
+                                        {% for i in "12345" %}
+                                            {% if forloop.counter <= review.rating %}
+                                                ★
+                                            {% else %}
+                                                ☆
+                                            {% endif %}
+                                        {% endfor %}
+                                    </span>
+                                </div>
+                                <span class="review-date">{{ review.created_at|date:"Y/m/d" }}</span>
+                            </div>
+                            <div class="review-body">
+                                {{ review.comment|truncatewords:30 }}
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="no-reviews">
+                        <p>هنوز نظری برای این کتاب ثبت نشده است.</p>
+                    </div>
+                {% endif %}
+            </div>
+            
+            {% if user.is_authenticated %}
+                <div class="review-form-wrapper">
+                    <h4> نظر و امتیاز شما</h4>
+                    <form method="post" action="{% url 'book_reviews' book.id %}">
+                        {% csrf_token %}
+                        
+                        <div class="rating-selector">
+                            <span class="rating-label">امتیاز شما:</span>
+                            <div class="star-rating-select">
+                                {% for i in "12345" %}
+                                    <input type="radio" name="rating" value="{{ forloop.counter }}" id="star{{ forloop.counter }}" {% if forloop.counter == 5 %}checked{% endif %}>
+                                    <label for="star{{ forloop.counter }}" title="{{ forloop.counter }} ستاره">★</label>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <textarea name="comment" class="comment-input" rows="4" placeholder="نظر خود را درباره این کتاب بنویسید..."></textarea>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary btn-submit-review">
+                            ارسال نظر و امتیاز
+                        </button>
+                    </form>
+                </div>
+            {% else %}
+                <div class="login-prompt">
+                    <p>برای ثبت نظر و امتیاز، <a href="{% url 'login' %}?next={{ request.path }}">وارد حساب کاربری</a> خود شوید.</p>
+                </div>
+            {% endif %}
+          
+
+{% endblock %}

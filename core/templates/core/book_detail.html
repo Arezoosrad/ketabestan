@@ -1,0 +1,108 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block title %}{{ book.title }} | فروشگاه کتاب{% endblock %}
+
+{% block content %}
+<div class="book-detail-wrapper">
+    <div class="book-detail-card">
+        
+        <div class="book-gallery">
+            {% if book.cover %}
+                <img src="{{ book.cover.url }}" alt="{{ book.title }}" class="main-cover">
+            {% else %}
+                <img src="{% static 'images/default_cover.jpg' %}" alt="کاور پیش‌فرض" class="main-cover">
+            {% endif %}
+        </div>
+
+        <div class="book-info">
+            <h1 class="book-title">{{ book.title }}</h1>
+            
+            <div class="book-meta-info">
+                <div class="author-publisher">
+                    <span class="meta-label">نویسنده:</span>
+                    <span class="meta-value">{{ book.author }}</span>
+                    
+                    {% if book.publisher %}
+                        <span class="meta-label">ناشر:</span>
+                        <span class="meta-value">{{ book.publisher }}</span>
+                    {% endif %}
+                </div>
+                
+                <div class="book-specs">
+                    {% if book.pages %}
+                        <span class="spec-item">📖 {{ book.pages }} صفحه</span>
+                    {% endif %}
+                    {% if book.publish_date %}
+                        <span class="spec-item">📅 {{ book.publish_date|date:"Y/m/d" }}</span>
+                    {% endif %}
+                </div>
+
+                <div class="categories">
+                    {% for cat in book.categories.all %}
+                        <a href="#" class="category-badge">{{ cat.title }}</a>
+                    {% empty %}
+                        <span class="category-badge">دسته‌بندی نشده</span>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="price-section">
+                {% if book.is_free %}
+                    <span class="free-price">✨ کاملاً رایگان</span>
+                {% else %}
+                    <span class="price-label">قیمت:</span>
+                    <span class="price-amount">{{ book.price }}</span>
+                    <span class="price-currency">تومان</span>
+                    
+                    {% if book.discount_percent %}
+                        <span class="discount-badge">٪{{ book.discount_percent }} تخفیف</span>
+                        <span class="original-price">{{ book.original_price }} تومان</span>
+                    {% endif %}
+                {% endif %}
+            </div>
+
+            <div class="action-buttons">
+                {% if book.preview_file %}
+                    <a href="{{ book.preview_file.url }}" target="_blank" class="btn btn-outline">
+                        👁 پیش‌نمایش
+                    </a>
+                {% endif %}
+
+                {% if book.is_free and book.full_file %}
+                    <a href="{{ book.full_file.url }}" download class="btn btn-success">
+                        ⬇ دانلود رایگان
+                    </a>
+                {% else %}
+                   <a href="{% url 'add_to_cart' book.id %}" class="btn btn-primary">
+            🛒 افزودن به سبد خرید
+                 </a>
+                   <a href="{% url 'book_reviews' book.id %}" class="btn btn-warning">✏ بازخوردها</a>
+                {% endif %}
+            </div>
+
+            <div class="book-description-section">
+                <h3>📘 درباره کتاب</h3>
+                <div class="book-description">
+                    {{ book.description|linebreaks }}
+                </div>
+            </div>
+            <a href="{% url 'book_reviews' book.id %}" class="btn btn-warning">✏ بازخوردها</a>
+            <a href="{% url 'book_delete' book.id %}" class="btn btn-danger" onclick="return confirm('آیا از حذف این کتاب اطمینان دارید؟')">🗑 حذف</a>
+            <div class="interaction-section">
+                <div class="interaction-row">
+                    <a href="{% url 'plusfavor' book.id %}" class="favorite-heart">
+                        🤍
+                        <span class="favorite-text">
+                            افزودن به علاقه‌مندی‌ها
+                        </span>
+                    </a>
+
+            
+      
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}

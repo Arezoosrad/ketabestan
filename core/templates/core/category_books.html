@@ -1,0 +1,29 @@
+{% extends "core/base.html" %}
+{% load static %}
+{% block content %}
+<div class="container">
+    <h1 class="page-title">{{ category.title }}</h1>
+
+    <div class="books-row">
+        {% for book in books %}
+            <div class="book-card horizontal">
+                <img src="{{ book.cover.url }}" alt="{{ book.title }}">
+                <div class="info">
+                    <h3>{{ book.title }}</h3>
+                    <p>{{ book.author }}</p>
+
+                    {% if book.is_free %}
+                        <span class="free">رایگان</span>
+                    {% else %}
+                        <span class="price">{{ book.price }} تومان</span>
+                    {% endif %}
+
+                    <a href="{% url 'book_detail' book.id %}" class="details-btn">جزئیات بیشتر</a>
+                </div>
+            </div>
+        {% empty %}
+            <p>کتابی برای این دسته وجود ندارد</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

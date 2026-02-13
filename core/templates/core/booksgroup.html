@@ -1,0 +1,23 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+
+{% block content %}
+<div class="container">
+
+    <h1 class="page-title">دسته‌بندی‌ها</h1>
+
+    <ul class="category-list">
+        {% for category in categories %}
+            <li>
+                <a href="{% url 'category_books' category.id %}">
+                    {{ category.title }}
+                
+            </li>
+        {% empty %}
+            <li>دسته‌بندی‌ای وجود ندارد</li>
+        {% endfor %}
+    </ul>
+
+</div>
+{% endblock %}

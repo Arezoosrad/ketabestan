@@ -1,0 +1,161 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static 'core/css/cart.css' %}">
+<style>
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="cart-wrapper">
+    <div class="cart-header">
+        <h2>🛒 سبد خرید من</h2>
+        <a href="{% url 'home' %}" class="btn-wallet" style="background: var(--light); color: var(--dark);">
+            <i class="bi bi-arrow-right"></i>
+            ادامه خرید
+        </a>
+    </div>
+
+    {% if items %}
+    <div class="wallet-card">
+        <div class="wallet-info">
+            <div class="wallet-icon">
+                💳
+            </div>
+            <div class="wallet-details">
+                <h4>کیف پول شما</h4>
+                <div class="wallet-balance">
+                    {{ wallet_balance }} <small>تومان</small>
+                </div>
+            </div>
+        </div>
+        <div class="wallet-actions">
+            <a href="{% url 'charge_wallet' %}" class="btn-wallet">
+                <i class="bi bi-plus-circle"></i>
+                شارژ کیف پول
+            </a>
+            <a href="{% url 'wallet_detail' %}" class="btn-wallet">
+                <i class="bi bi-clock-history"></i>
+                مشاهده کیف پول
+            </a>
+        </div>
+    </div>
+
+    <div class="cart-content">
+        <div class="cart-items">
+            {% for item in items %}
+            <div class="cart-item">
+                {% if item.book.cover %}
+                <img src="{{ item.book.cover.url }}" alt="{{ item.book.title }}" class="item-cover">
+                {% else %}
+                <img src="{% static 'images/default_cover.jpg' %}" alt="کاور پیش‌فرض" class="item-cover">
+                {% endif %}
+
+                <div class="item-details">
+                    <a href="{% url 'book_detail' item.book.id %}" class="item-title">
+                        {{ item.book.title }}
+                    </a>
+                    <span class="item-author">
+                        <i class="bi bi-person"></i> {{ item.book.author }}
+                    </span>
+                    {% if item.book.categories.all %}
+                        {% for cat in item.book.categories.all|slice:":1" %}
+                        <span class="item-category">{{ cat.title }}</span>
+                        {% endfor %}
+                    {% endif %}
+                    <span class="item-price">
+                        {{ item.book.price }} تومان
+                    </span>
+                </div>
+
+                <div class="item-actions">
+                    <a href="{% url 'remove_from_cart' item.id %}" class="btn-remove" onclick="return confirm('آیا از حذف این کتاب از سبد خرید مطمئن هستید؟')">
+                        <i class="bi bi-trash"></i>
+                        حذف
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="cart-summary">
+            <div class="summary-title">📋 خلاصه سفارش</div>
+            <div class="summary-row">
+                <span>تعداد کتاب‌ها:</span>
+                <span>{{ items|length }} عنوان</span>
+            </div>
+            <div class="summary-row">
+                <span>جمع اولیه:</span>
+                <span>{{ total_price }} تومان</span>
+            </div>
+            <div class="summary-total">
+                <span>مبلغ قابل پرداخت:</span>
+                <span style="color: var(--primary);">{{ total_price }} تومان</span>
+            </div>
+
+            <div class="wallet-payment">
+                <div class="wallet-payment-title">
+                    <i class="bi bi-wallet2"></i>
+                    <span style="font-weight: 700;">پرداخت از کیف پول</span>
+                </div>
+                
+                <div class="wallet-payment-info">
+                    <span>موجودی کیف پول:</span>
+                    <span style="font-weight: 700;">{{ wallet_balance }} تومان</span>
+                </div>
+
+                {% if wallet_balance >= total_price %}
+                <form method="post" action="{% url 'purchase_from_wallet' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="total_price" value="{{ total_price }}">
+                    <button type="submit" class="btn-pay-wallet" onclick="return confirm('آیا از خرید با کیف پول مطمئن هستید؟')">
+                        <i class="bi bi-check-circle"></i>
+                        ✅ خرید و پرداخت از کیف پول
+                    </button>
+                </form>
+                {% else %}
+                <button class="btn-pay-wallet disabled" disabled>
+                    <i class="bi bi-exclamation-circle"></i>
+                    موجودی کیف پول کافی نیست
+                </button>
+                <a href="{% url 'charge_wallet' %}" class="btn-wallet" style="background: white; color: var(--success); margin-top: 0.5rem; justify-content: center;">
+                    <i class="bi bi-plus-circle"></i>
+                    شارژ کیف پول
+                </a>
+                {% endif %}
+            </div>
+
+        
+            <a href="{% url 'home' %}" class="btn-cancel">
+                <i class="bi bi-arrow-right"></i>
+             ا انصراف از پرداخت
+            </a>
+        </div>
+    </div>
+    {% else %}
+    <div class="empty-cart">
+        <i class="bi bi-cart-x"></i>
+        <h3>سبد خرید شما خالی است!</h3>
+        <p>هنوز کتابی به سبد خرید خود اضافه نکرده‌اید.</p>
+        <a href="{% url 'home' %}" class="btn-shop">
+            <i class="bi bi-shop"></i>
+            رفتن به فروشگاه
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+{% if messages %}
+<div style="position: fixed; top: 20px; left: 20px; z-index: 9999;">
+    {% for message in messages %}
+    <div style="background: linear-gradient(135deg, #00b894, #00cec9); color: white; padding: 1rem 2rem; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,184,148,0.3); animation: slideIn 0.5s ease-out; margin-bottom: 0.5rem;">
+        <i class="bi bi-check-circle-fill me-2"></i>
+        {{ message }}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+{% endblock %}

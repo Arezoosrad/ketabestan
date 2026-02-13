@@ -1,0 +1,125 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block title %}➕ افزودن کتاب جدید{% endblock %}
+
+{% block content %}
+
+
+<div class="container">
+    <div class="card shadow-sm">
+        <div class="card-header text-center">
+            ➕ افزودن کتاب جدید
+        </div>
+        <div class="card-body">
+
+            
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form.non_field_errors }}
+
+                {% for field in form %}
+                    <div class="mb-4">
+                        {% if field.name == 'categories' %}
+                            
+                            <label class="form-label">{{ field.label }}</label>
+                            <div class="category-wrapper">
+                                <div class="category-grid">
+                                    {{ field }}
+                                </div>
+                                {% if field.help_text %}
+                                    <div class="form-text">{{ field.help_text }}</div>
+                                {% endif %}
+                            </div>
+
+                        {% elif field.name == 'is_free' %}
+                           
+                            <div class="free-wrapper">
+                                <div class="form-check">
+                                    {{ field }}
+                                    <label class="form-check-label" for="{{ field.id_for_label }}">
+                                        {{ field.label }} ✨
+                                    </label>
+                                </div>
+                                {% if field.help_text %}
+                                    <div class="form-text">{{ field.help_text }}</div>
+                                {% endif %}
+                            </div>
+
+                        {% else %}
+                            
+                            <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                            
+                            {% if field.name == 'description' %}
+                                <textarea name="{{ field.name }}" id="{{ field.id_for_label }}" 
+                                          class="form-control" placeholder="توضیحات کتاب" rows="5">{{ field.value|default:'' }}</textarea>
+                            {% elif field.name == 'price' %}
+                                <input type="number" name="{{ field.name }}" id="{{ field.id_for_label }}" 
+                                       class="form-control" placeholder="قیمت به تومان" value="{{ field.value|default:'' }}">
+                            {% elif field.name == 'cover' or field.name == 'preview_file' or field.name == 'full_file' %}
+                                {{ field }}
+                                {% if field.name == 'cover' %}
+                                    <div class="file-help-text">📸 جلد کتاب را آپلود کنید</div>
+                                {% elif field.name == 'preview_file' %}
+                                    <div class="file-help-text">📄 فایل مقدمه کتاب (PDF)</div>
+                                {% elif field.name == 'full_file' %}
+                                    <div class="file-help-text">📚 فایل کامل کتاب (PDF)</div>
+                                {% endif %}
+                            {% else %}
+                                <input type="text" name="{{ field.name }}" id="{{ field.id_for_label }}" 
+                                       class="form-control" placeholder="{% if field.name == 'title' %}عنوان کتاب{% elif field.name == 'author' %}نام نویسنده{% endif %}" 
+                                       value="{{ field.value|default:'' }}">
+                            {% endif %}
+                        {% endif %}
+
+                        {% if field.help_text and field.name != 'categories' and field.name != 'is_free' %}
+                            <div class="form-text">{{ field.help_text }}</div>
+                        {% endif %}
+
+                        {% if field.errors %}
+                            <div class="text-danger mt-1">
+                                {{ field.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+
+                <div class="text-center mt-5">
+                    <button type="submit" class="btn btn-success btn-lg me-2">
+                        ✅ ثبت کتاب
+                    </button>
+                    <a href="{% url 'home' %}" class="btn btn-secondary btn-lg">
+                        ❌ انصراف
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const categoryCheckboxes = document.querySelectorAll('input[type="checkbox"][name="categories"]');
+        categoryCheckboxes.forEach(function(checkbox) {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'category-item';
+            checkbox.parentNode.insertBefore(wrapper, checkbox);
+            wrapper.appendChild(checkbox);
+            
+            const label = document.querySelector('label[for="' + checkbox.id + '"]');
+            if (label) {
+                wrapper.appendChild(label);
+            }
+        });
+    });
+</script>
+{% endblock %}
