@@ -1,24 +1,12 @@
 
 from django.db import models
-from django.contrib.auth.models import User
+from accounts.models import User
 
-class Profile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE,verbose_name="کاربر")
-    avatar = models.ImageField(upload_to='avatars/', blank=True, null=True,verbose_name="پروفایل کاربر")
-    bio = models.TextField(blank=True,verbose_name="بیوگرافی")
-
-    class Meta:
-        verbose_name_plural="پروفایل"
 
 class Category(models.Model):
-    title = models.CharField(max_length=100, unique=True,verbose_name="عنوان")
-
-    def __str__(self):
-        return self.title
-    class Meta:
-        verbose_name_plural="موضوعات"
-
-    
+     title = models.CharField(max_length=100, unique=True,verbose_name="عنوان")
+     def __str__(self): return self.title
+     class Meta: verbose_name_plural="موضوعات"
 
 class Book(models.Model):
     title = models.CharField(max_length=200,verbose_name="عنوان")
