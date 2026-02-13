@@ -1,0 +1,84 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block title %}
+پروفایل {{ user.username }}
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'core/css/style.css' %}">
+{% endblock %}
+{% block content %}
+
+
+<li class="nav-item">
+<a class="nav-link nav-fancy" href="{% url 'favorite_books' %}">
+<i class="bi bi-heart-fill"></i> علاقه‌مندی‌ها
+</a>
+</li>
+<li class="nav-item">
+<a class="nav-link nav-fancy" href="{% url 'library' %}">
+<i class="bi bi-collection-fill"></i> کتابخانه
+</a>
+</li>
+<li class="nav-item">
+<a class="nav-link nav-fancy" href="{% url 'add_book' %}">
+<i class="bi bi-book-fill"></i> اضافه کردن کتاب جدید
+</a>
+</li>
+
+
+
+
+
+
+<div class="profile-container">
+
+    
+
+
+
+
+
+
+
+
+    <div class="profile-header">
+        <div class="profile-avatar">
+            {% if user.profile_picture %}
+                <img src="{{ user.profile_picture.url }}" alt="Profile Picture">
+            {% else %}
+                <img src="/static/images/default-avatar.png" alt="Default Avatar">
+            {% endif %}
+        </div>
+
+        <h2 class="profile-username">{{ user.username }}</h2>
+    </div>
+
+    اطلاعات پروفایل
+
+
+
+    <div class="profile-info">
+        <p><strong> تاریخ تولد:</strong>
+            {% if user.birthdate %}
+                {{ user.birthdate }}
+            {% else %}
+                ثبت نشده
+            {% endif %}
+        </p>
+
+        <div class="profile-bio">
+            <h4>درباره من</h4>
+            <p>
+                {% if user.bio %}
+                    {{ user.bio }}
+                {% else %}
+                    هنوز بیوگرافی‌ای نوشته نشده است.
+                {% endif %}
+            </p>
+        </div>
+
+
+             
+{% endblock %}

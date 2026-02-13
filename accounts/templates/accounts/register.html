@@ -1,0 +1,32 @@
+{% extends "core/base.html" %}
+
+
+{% block title %}
+ثبت‌ نام 
+{% endblock %}
+
+
+{% block content %}
+<form action="{% url 'register' %}" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {% if form.non_field_errors %}
+    {% for error in form.non_field_errors %}
+    *<smal class="text-danger">{{ error }}</smal>
+{% endfor %}
+{% endif %}
+{% for field in form %}
+{{ field.label }}
+{{ field }}
+{% if field.errors %}
+{% for error in field.errors %}
+*<smal class="text-danger">{{ error }}</smal>
+{% endfor %}
+{% endif %}
+{% endfor %}
+
+
+
+    <input type="submit" class="btn btn-primary" value="ثبت‌ نام">
+
+     </form>
+     {% endblock %}
